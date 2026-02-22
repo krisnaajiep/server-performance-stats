@@ -19,7 +19,7 @@ help_message() {
     echo "  -h, --help     Show this help message and exit"
 }
 
-if [[ "${1:-}" =~ ^-h(elp)?$ ]]
+if [[ "${1:-}" =~ ^-*h(elp)?$ ]]
 then
     help_message
     exit 0
@@ -46,7 +46,7 @@ init() {
 
 # Print total CPU usage
 total_cpu_usage() {
-    local summary="$(mpstat -P ALL 1 1 | head -n 8 | tail -n 5)"
+    local summary="$(mpstat -P ALL 1 1 | tail -n +4 | awk '!/Average:/ && $1 != "" {print}')"
     
     printf "\n%s\n" "Total CPU Usage:"
     echo "${strip// /-}"
@@ -59,7 +59,7 @@ total_cpu_usage() {
         if [[ "$cpu" == "all" ]]; then
             cpu=${cpu^^}  # Convert to uppercase
         else
-            cpu="CPU$cpu"
+            cpu="CPU$(( cpu + 1 ))"
         fi
         
         printf "%-10s %-1s %s\n" "$cpu" ":" "$usage%"
@@ -73,7 +73,7 @@ total_memory_usage() {
     local used="$(echo "$mem_info" | awk '/Mem:/ {print $3}')"
     local free="$(echo "$mem_info" | awk '/Mem:/ {print $4}')"
     local available="$(echo "$mem_info" | awk '/Mem:/ {print $7}')"
-    local used_percentage="$(echo "$mem_info" | awk '/Mem:/ {printf("%.2f", $3/$2 * 100)}')"
+    local used_percentage="$(free | awk '/Mem:/ {printf("%.2f", $3/$2 * 100)}')"
     local cache="$(echo "$mem_info" | awk '/Mem:/ {print $6}')"
 
     printf "\n%s\n" "Total Memory Usage:"
@@ -93,13 +93,13 @@ total_disk_usage() {
     local total="$(echo "$disk_info" | awk '{print $2}')"
     local used="$(echo "$disk_info" | awk '{print $3}')"
     local available="$(echo "$disk_info" | awk '{print $4}')"
-    local used_percentage="$(echo "$disk_info" | awk '{print $5}')"
+    local used_percentage="$(df --total | tail -n 1 | awk '{print $5}')"
 
     printf "\n%s\n" "Total Disk Usage:"
     echo "${strip// /-}"
 
     printf "%-10s %-1s %s\n" "Total" ":" "$total"
-    printf "%-10s %-1s %s\n" "Used" ":" "$used ($used_percentage%)"
+    printf "%-10s %-1s %s\n" "Used" ":" "$used ($used_percentage)"
     printf "%-10s %-1s %s\n" "Available" ":" "$available"
 }
 
@@ -136,7 +136,7 @@ auth_logs() {
     local logged_in_users="$(w)"
     local bad_login_attempts="$(sudo lastb)"
 
-    printf "\n%s\n" "Logged in users: $(echo "$logged_in_users" | head -n 1 | awk -F',' '{print $3}' | sed -e 's/^[[:space:]]*//')"
+    printf "\n%s\n" "Logged in users: $(echo "$logged_in_users" | tail -n +3 | wc -l)"
     echo "${strip// /-}"
     echo "$logged_in_users" | tail -n +2
 
