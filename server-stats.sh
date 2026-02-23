@@ -148,13 +148,20 @@ top_5_processes_by_memory() {
 # Print logged in users and failed login attempts"
 auth_logs() {
     local logged_in_users="$(w)"
-    local bad_login_attempts="$(sudo lastb)"
+    local bad_login_attempts
 
     printf "\n%s\n" "Logged in users: $(echo "$logged_in_users" | tail -n +3 | wc -l)"
     echo "${strip// /-}"
     echo "$logged_in_users" | tail -n +2
 
-    printf "\n%s\n" "Bad login attempts: $(echo "$bad_login_attempts" | head -n -2 | wc -l)"
+    if command -v lastb > /dev/null && [[ -r /var/log/btmp ]]; then
+        bad_login_attempts="$(lastb)"
+        printf "\n%s\n" "Bad login attempts: $(echo "$bad_login_attempts" | head -n -2 | wc -l)"
+    else
+        printf "\n%s\n" "Bad login attempts:"
+        bad_login_attempts="Permission denied or unavailable"
+    fi
+
     echo "${strip// /-}"
     echo "$bad_login_attempts"
 }
