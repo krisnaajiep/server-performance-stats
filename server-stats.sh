@@ -39,18 +39,15 @@ dependency_check() {
     require_cmd free
     require_cmd df
     require_cmd ps
-    require_cmd hostnamectl
     require_cmd w
 }
 
 # Print additional host information
 init() {
-    local hostnamectl="$(hostnamectl)"
-    
     printf "%-27s %-1s %s\n" "Current date and time" ":" "$(date)"
-    printf "%-27s %-1s %s\n" "Hostname" ":" "$(echo "$hostnamectl" | awk -F': ' ' /Static hostname:/ {print $2}')"
-    printf "%-27s %-1s %s\n" "Operating System" ":" "$(echo "$hostnamectl" | awk -F': ' ' /Operating System:/ {print $2}')"
-    printf "%-27s %-1s %s\n" "Kernel version" ":" "$(echo "$hostnamectl" | awk -F': ' ' /Kernel:/ {print $2}')"
+    printf "%-27s %-1s %s\n" "Hostname" ":" "$(hostname)"
+    printf "%-27s %-1s %s\n" "Operating System" ":" "$(grep PRETTY_NAME /etc/os-release | cut -d'=' -f 2 | sed 's/"//g')"
+    printf "%-27s %-1s %s\n" "Kernel version" ":" "$(uname -r)"
     printf "%-27s %-1s %s\n" "System uptime" ":" "$(uptime -p)"
     printf "%-27s %-1s %s\n" "Load average (1, 5, 15 min)" ":" "$(uptime | awk -F'load average: ' '{print $2}')"
 
@@ -96,7 +93,6 @@ total_memory_usage() {
     printf "%-10s %-1s %s\n" "Total" ":" "$total"
     printf "%-10s %-1s %s\n" "Used" ":" "$used ($used_percentage%)"
     printf "%-10s %-1s %s\n" "Free" ":" "$free"
-    printf "%-10s %-1s %s\n" "Total" ":" "$total"
     printf "%-10s %-1s %s\n" "Available" ":" "$available"
 }
 
