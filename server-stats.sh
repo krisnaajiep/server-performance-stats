@@ -25,9 +25,23 @@ then
     exit 0
 fi
 
-cd "$(dirname "$0")"
-
 printf -v strip "%*s" 80 ""
+
+require_cmd() {
+    command -v "$1" > /dev/null 2>&1 || {
+        echo "Error: '$1' command is required but not installed."
+        exit 1
+    }
+}
+
+dependency_check() {
+    require_cmd mpstat
+    require_cmd free
+    require_cmd df
+    require_cmd ps
+    require_cmd hostnamectl
+    require_cmd w
+}
 
 # Print additional host information
 init() {
@@ -156,6 +170,7 @@ all_stats() {
 }
 
 main() {
+    dependency_check
     init
 
     # Collect server stats
