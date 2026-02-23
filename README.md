@@ -16,6 +16,15 @@ This is a Bash script that can analyse basic server performance stats on Linux, 
 
 ## Setup
 
+To run this script, you’ll need the following pre-installed commands:
+
+* mpstat
+* free
+* df
+* ps
+* w
+* last
+
 1. Clone the repository
 
    ```bash
