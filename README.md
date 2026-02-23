@@ -25,6 +25,8 @@ To run this script, you’ll need the following pre-installed commands:
 * w
 * last
 
+How to run:
+
 1. Clone the repository
 
    ```bash
@@ -68,7 +70,7 @@ Example output:
 Current date and time       : Sun Feb 22 10:13:29 PM WIB 2026
 Hostname                    : server1
 Operating System            : Ubuntu 24.04.4 LTS
-Kernel version              : Linux 6.17.0-14-generic
+Kernel version              : 6.17.0-14-generic
 System uptime               : up 1 week, 1 day, 1 hour, 58 minutes
 Load average (1, 5, 15 min) : 0.29, 0.86, 1.18
 
@@ -87,7 +89,6 @@ Total Memory Usage:
 Total      : 31Gi
 Used       : 12Gi (38.71%)
 Free       : 2.4Gi
-Total      : 31Gi
 Available  : 18Gi
 
 Total Disk Usage:
@@ -114,7 +115,7 @@ Top 5 Processes by Memory Usage:
 1075241 chrome           1.9
 3946565 chrome           1.8
 
-Logged in users: 1 user
+Logged in users: 1
 --------------------------------------------------------------------------------
 USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU  WHAT
 user1    tty2     -                14Feb26  8days  2:11m  0.04s /usr/libexec/gnome-session-binary --session=ubuntu
@@ -124,6 +125,12 @@ Bad login attempts: 1
 user1     seat0        login screen     Fri Feb  6 05:56 - 05:56  (00:00)
 
 btmp begins Fri Feb  6 05:56:54 2026
+```
+
+Note: if you need root permission to read `/var/log/btmp` file for bad login attempts, run the script as root.
+
+```bash
+sudo ./server-stats.sh
 ```
 
 ## Project Status
