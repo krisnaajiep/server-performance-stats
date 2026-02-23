@@ -25,7 +25,7 @@ then
     exit 0
 fi
 
-printf -v strip "%*s" 80 ""
+readonly STRIP="$(printf '%*s' 80 '')"
 
 require_cmd() {
     command -v "$1" > /dev/null 2>&1 || {
@@ -60,7 +60,7 @@ total_cpu_usage() {
     local summary="$(mpstat -P ALL 1 1 | tail -n +4 | awk '!/Average:/ && $1 != "" {print}')"
     
     printf "\n%s\n" "Total CPU Usage:"
-    echo "${strip// /-}"
+    echo "${STRIP// /-}"
     
     while IFS= read -r line
     do
@@ -88,7 +88,7 @@ total_memory_usage() {
     local cache="$(echo "$mem_info" | awk '/Mem:/ {print $6}')"
 
     printf "\n%s\n" "Total Memory Usage:"
-    echo "${strip// /-}"
+    echo "${STRIP// /-}"
 
     printf "%-10s %-1s %s\n" "Total" ":" "$total"
     printf "%-10s %-1s %s\n" "Used" ":" "$used ($used_percentage%)"
@@ -106,7 +106,7 @@ total_disk_usage() {
     local used_percentage="$(df --total | tail -n 1 | awk '{print $5}')"
 
     printf "\n%s\n" "Total Disk Usage:"
-    echo "${strip// /-}"
+    echo "${STRIP// /-}"
 
     printf "%-10s %-1s %s\n" "Total" ":" "$total"
     printf "%-10s %-1s %s\n" "Used" ":" "$used ($used_percentage)"
@@ -130,14 +130,14 @@ top_5_processes() {
 # Print top 5 processes by CPU usage
 top_5_processes_by_cpu() {
     printf "\n%s\n" "Top 5 Processes by CPU Usage:"
-    echo "${strip// /-}"
+    echo "${STRIP// /-}"
     ps -eo pid,comm,%cpu --sort=-%cpu | head -n 6
 }
 
 # Print top 5 processes by Memory usage
 top_5_processes_by_memory() {
     printf "\n%s\n" "Top 5 Processes by Memory Usage:"
-    echo "${strip// /-}"
+    echo "${STRIP// /-}"
     ps -eo pid,comm,%mem --sort=-%mem | head -n 6
 }
 
@@ -147,7 +147,7 @@ auth_logs() {
     local bad_login_attempts
 
     printf "\n%s\n" "Logged in users: $(echo "$logged_in_users" | tail -n +3 | wc -l)"
-    echo "${strip// /-}"
+    echo "${STRIP// /-}"
     echo "$logged_in_users" | tail -n +2
 
     if command -v lastb > /dev/null && [[ -r /var/log/btmp ]]; then
@@ -158,7 +158,7 @@ auth_logs() {
         bad_login_attempts="Permission denied or unavailable"
     fi
 
-    echo "${strip// /-}"
+    echo "${STRIP// /-}"
     echo "$bad_login_attempts"
 }
 
